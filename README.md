@@ -21,14 +21,19 @@ which supports C++11. Currently this has been tested with -
 * Xcode 6 on OS X 10.9
 * Xcode 6.4 on OS X 10.10
 * Xcode 7.1 on OS X 10.11
+* GCC 4.8 + Boost 1.48 on CentOS 6
+* GCC 4.8 + Boost 1.53 on CentOS 7
 * GCC 4.8 on Arch Linux and Ubuntu
-* GCC 4.9 on Ubuntu
+* GCC 4.8 on Ubuntu
 * GCC 5.3 + Boost 1.60 on Ubuntu
 * Microsoft Visual Studio 2013 on Windows Server 2008 R2
 
 Library dependencies are -
-* Boost 1.54 or later
+* Boost 1.48 or later
 * ZeroMQ 4.0.x
+
+Tests and example code require -
+* Boost 1.54 or later
 
 To build on Linux / OS X -
 ```
@@ -52,6 +57,18 @@ You can also open Visual Studio solution from `build` directory after invoking C
 To change the default install location use `-DCMAKE_INSTALL_PREFIX` when invoking CMake.
 
 To change where the build looks for Boost and ZeroMQ use `-DBOOST_ROOT=<my custom Boost install>` and `-DZMQ_ROOT=<my custom ZeroMQ install>` when invoking CMake. Or set `BOOST_ROOT` and `ZMQ_ROOT` environment variables.
+
+## Packaging via CPack
+
+Building and packaging -
+```
+> mkdir build
+> cd build
+> cmake -DAZMQ_NO_TESTS=1 -DCPACK_PACKAGE_CONTACT=maintainer@example.com ..
+> cpack -G TGZ
+> cpack -G RPM
+> cpack -G DEB
+```
 
 ## Example Code
 This is an azmq version of the code presented in the ZeroMQ guide at

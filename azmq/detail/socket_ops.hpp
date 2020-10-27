@@ -17,7 +17,6 @@
 #include <boost/format.hpp>
 #include <boost/lexical_cast.hpp>
 #include <boost/regex.hpp>
-#include <boost/utility/string_ref.hpp>
 #include <boost/asio/io_service.hpp>
 #include <boost/asio/socket_base.hpp>
 #if ! defined BOOST_ASIO_WINDOWS
@@ -32,6 +31,7 @@
 
 #include <zmq.h>
 
+#include <cerrno>
 #include <iterator>
 #include <memory>
 #include <string>
@@ -219,10 +219,15 @@ namespace detail {
             BOOST_ASSERT_MSG(socket, "invalid socket");
             int evs = 0;
             size_t size = sizeof(evs);
-            auto rc = zmq_getsockopt(socket.get(), ZMQ_EVENTS, &evs, &size);
-            if (rc < 0) {
-                ec = make_error_code();
-                return 0;
+            for(;;) {
+                auto rc = zmq_getsockopt(socket.get(), ZMQ_EVENTS, &evs, &size);
+                if (rc < 0) {
+                    if (errno == EINTR)
+                        continue;
+                    ec = make_error_code();
+                    return 0;
+                }
+                break;
             }
             return evs;
         }
